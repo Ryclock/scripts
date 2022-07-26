@@ -19,9 +19,7 @@ def job(website, metadatabase) -> None:
 if __name__ == '__main__':
     website = 'https://news.youth.cn/'
     scheduler = BlockingScheduler()
-    # scheduler.add_job(job, trigger='interval', hours=2, jitter=120,
-    #                   kwargs={"website": website,
-    #                           'metadatabase': 'metadatabase'})
-    scheduler.add_job(job,  kwargs={"website": website,
-                                    'metadatabase': 'test'})
+    scheduler.add_job(job, trigger='interval', hours=2, jitter=120,
+                      kwargs={"website": website,
+                              'metadatabase': 'metadatabase'})
     scheduler.start()
