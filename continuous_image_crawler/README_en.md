@@ -1,19 +1,14 @@
-# Multi-threaded Continuous Image Crawler
+# Multi-threaded Continuous Image Crawler{ignore=true}
 
 This crawler is designed to scrape images from a website and its directly associated web pages every two hours. The scraped images are stored in a local MongoDB database. Please note that this crawler is not intended for general-purpose use.
 
-## Language Switch
+## Table
+[TOC]
 
+## something else
+
+- There are many loopholes and shortcomings in the project, and there are no plans to continue optimizing it.
 - [中文](./README.md)
-
-## Table of Contents
-
-- [Multi-threaded Continuous Image Crawler](#multi-threaded-continuous-image-crawler)
-  - [Language Switch](#language-switch)
-  - [Table of Contents](#table-of-contents)
-  - [Possible Configuration Requirements](#possible-configuration-requirements)
-  - [Version History](#version-history)
-  - [References](#references)
 
 ## Possible Configuration Requirements
 
