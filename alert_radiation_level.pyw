@@ -54,6 +54,21 @@ def send_email(message):
     import subprocess
     from email.mime.text import MIMEText
     import smtplib
+    import configparser
+    import os
+
+    conf_path = os.path.dirname(__file__)+"/config"
+    conf = configparser.ConfigParser()
+    if not conf.read(conf_path):
+        raise FileNotFoundError(conf_path)
+
+    filename = os.path.basename(__file__)
+    sender_email = eval(conf.get('MAIL', 'sender_email'))
+    sender_password = eval(conf.get(filename, 'sender_password'))
+    receiver_email = eval(conf.get('MAIL', 'receiver_email'))
+    subject = eval(conf.get(filename, 'subject'))
+    smtp_server = eval(conf.get('MAIL', 'smtp_server'))
+    smtp_port = eval(conf.get('MAIL', 'smtp_port'))
 
     try:
         import psutil
@@ -61,13 +76,6 @@ def send_email(message):
         subprocess.check_call(
             [sys.executable, "-m", "pip", "install", "psutil"])
         import psutil
-
-    sender_email = "2669481232@qq.com"
-    sender_password = "seohgbhotezweabg"
-    receiver_email = "childj@foxmail.com"
-    subject = "Daily Radiation Level"
-    smtp_server = "smtp.qq.com"
-    smtp_port = 587
 
     msg = MIMEText(message)
     msg['Subject'] = subject
