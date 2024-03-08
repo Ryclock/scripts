@@ -9,7 +9,7 @@ conf = configparser.ConfigParser()
 if not conf.read(conf_path):
     raise FileNotFoundError(conf_path)
 
-backup_directory = eval(conf.get('PATH','log_directory'))
+backup_directory = eval(conf.get('PATH','backup_directory'))
 log_directory = eval(conf.get('PATH','log_directory'))
 if not os.path.exists(log_directory):
     os.makedirs(log_directory)
