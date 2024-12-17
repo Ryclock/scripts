@@ -8,7 +8,7 @@ music_directory = read_config_byconfigparser(filename,'music_directory')
 lrc_directory = read_config_byconfigparser(filename, 'lrc_directory')
 cover_if = read_config_byconfigparser(filename, 'cover_if')
 
-def get_best_lyric(title:str, parent:str, filename:str):
+def get_best_lyric(title:str, artist:str, parent:str, filename:str):
     path = os.path.join(parent, filename)
     if not os.path.exists(path):
         raise Exception(f"filepath[{path}] not exists")
@@ -16,6 +16,7 @@ def get_best_lyric(title:str, parent:str, filename:str):
     url = '/lyrics'
     params = {
         'title': title,
+        'artist': artist,
         'path': path
     }
     response = requests.get(base_url+url, params=params)
@@ -46,6 +47,7 @@ if __name__ == '__main__':
             continue
 
         title = file_basename.split("-")[0]
+        artist = file_basename.split("-")[-1]
         music_filename = filename
         lrc_filename = file_basename+".lrc"
         if not cover_if and os.path.exists(os.path.join(lrc_directory, lrc_filename)):
@@ -54,7 +56,7 @@ if __name__ == '__main__':
 
         print(f"start operate file[{file_basename}]")
         try:
-            best_lyric = get_best_lyric(title, music_directory,music_filename)
+            best_lyric = get_best_lyric(title, artist, music_directory,music_filename)
             write_lyric_tofile(best_lyric, lrc_directory, lrc_filename)
         except Exception as e:
             print(f"error in operate file[{file_basename}]: {e}")
