@@ -6,6 +6,7 @@ filename = os.path.basename(__file__)
 base_url = read_config_byconfigparser(filename, 'lrc_server')
 music_directory = read_config_byconfigparser(filename,'music_directory')
 lrc_directory = read_config_byconfigparser(filename, 'lrc_directory')
+cover_if = read_config_byconfigparser(filename, 'cover_if')
 
 def get_best_lyric(title:str, parent:str, filename:str):
     path = os.path.join(parent, filename)
@@ -44,10 +45,16 @@ if __name__ == '__main__':
             print(f"unsupported file[{file_basename}] type[{file_extension}]")
             continue
 
+        title = file_basename.split("-")[0]
+        music_filename = filename
+        lrc_filename = file_basename+".lrc"
+        if not cover_if and os.path.exists(os.path.join(lrc_directory, lrc_filename)):
+            print(f"lrc file[{lrc_filename}] already exists, skip")
+            continue
+
         print(f"start operate file[{file_basename}]")
         try:
-            title = file_basename.split("-")[0]
-            best_lyric = get_best_lyric(title, music_directory,filename)
-            write_lyric_tofile(best_lyric, lrc_directory, file_basename+".lrc")
+            best_lyric = get_best_lyric(title, music_directory,music_filename)
+            write_lyric_tofile(best_lyric, lrc_directory, lrc_filename)
         except Exception as e:
             print(f"error in operate file[{file_basename}]: {e}")
