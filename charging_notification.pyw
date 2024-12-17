@@ -4,20 +4,16 @@ import smtplib
 import subprocess
 import sys
 import os
-import configparser
-
-conf_path = os.path.dirname(__file__)+"/config"
-conf = configparser.ConfigParser()
-if not conf.read(conf_path):
-    raise FileNotFoundError(conf_path)
+from config_loader import read_config_byconfigparser
 
 filename = os.path.basename(__file__)
-sender_email = eval(conf.get('MAIL', 'sender_email'))
-sender_password = eval(conf.get(filename, 'sender_password'))
-receiver_email = eval(conf.get('MAIL', 'receiver_email'))
-subject = eval(conf.get(filename, 'subject'))
-smtp_server = eval(conf.get('MAIL', 'smtp_server'))
-smtp_port = eval(conf.get('MAIL', 'smtp_port'))
+sender_email = eval(read_config_byconfigparser('MAIL', 'sender_email'))
+sender_password = eval(read_config_byconfigparser(filename, 'sender_password'))
+receiver_email = eval(read_config_byconfigparser('MAIL', 'receiver_email'))
+subject = eval(read_config_byconfigparser(filename, 'subject'))
+smtp_server = eval(read_config_byconfigparser('MAIL', 'smtp_server'))
+smtp_port = eval(read_config_byconfigparser('MAIL', 'smtp_port'))
+duration = eval(read_config_byconfigparser(filename, 'duration_seconds'))
 
 try:
     import psutil
@@ -26,15 +22,14 @@ except ImportError:
     import psutil
 
 previous_status = psutil.sensors_battery().power_plugged
-
-while True:
+start_time = time.time()
+while time.time() - start_time < duration:
     current_status = psutil.sensors_battery().power_plugged
     if current_status != previous_status:
         if current_status:
             message = "Device is charging"
         else:
             message = "Device is not charging"
-
         msg = MIMEText(message)
         msg['Subject'] = subject
         msg['From'] = sender_email
@@ -45,4 +40,4 @@ while True:
             server.login(sender_email, sender_password)
             server.send_message(msg)
     previous_status = current_status
-    time.sleep(30)
+    time.sleep(10)

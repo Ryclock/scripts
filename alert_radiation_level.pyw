@@ -54,21 +54,16 @@ def send_email(message):
     import subprocess
     from email.mime.text import MIMEText
     import smtplib
-    import configparser
     import os
-
-    conf_path = os.path.dirname(__file__)+"/config"
-    conf = configparser.ConfigParser()
-    if not conf.read(conf_path):
-        raise FileNotFoundError(conf_path)
+    from config_loader import read_config_byconfigparser
 
     filename = os.path.basename(__file__)
-    sender_email = eval(conf.get('MAIL', 'sender_email'))
-    sender_password = eval(conf.get(filename, 'sender_password'))
-    receiver_email = eval(conf.get('MAIL', 'receiver_email'))
-    subject = eval(conf.get(filename, 'subject'))
-    smtp_server = eval(conf.get('MAIL', 'smtp_server'))
-    smtp_port = eval(conf.get('MAIL', 'smtp_port'))
+    sender_email = eval(read_config_byconfigparser('MAIL', 'sender_email'))
+    sender_password = eval(read_config_byconfigparser(filename, 'sender_password'))
+    receiver_email = eval(read_config_byconfigparser('MAIL', 'receiver_email'))
+    subject = eval(read_config_byconfigparser(filename, 'subject'))
+    smtp_server = eval(read_config_byconfigparser('MAIL', 'smtp_server'))
+    smtp_port = eval(read_config_byconfigparser('MAIL', 'smtp_port'))
 
     try:
         import psutil

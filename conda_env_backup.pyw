@@ -1,16 +1,10 @@
 import os
 import subprocess
 import logging
-import configparser
+from config_loader import read_config_byconfigparser
 
-conf_path = os.path.dirname(__file__)+"/config"
-
-conf = configparser.ConfigParser()
-if not conf.read(conf_path):
-    raise FileNotFoundError(conf_path)
-
-backup_directory = eval(conf.get('PATH','backup_directory'))
-log_directory = eval(conf.get('PATH','log_directory'))
+backup_directory = eval(read_config_byconfigparser('PATH','backup_directory'))
+log_directory = eval(read_config_byconfigparser('PATH','log_directory'))
 if not os.path.exists(log_directory):
     os.makedirs(log_directory)
 
