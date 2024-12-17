@@ -3,8 +3,8 @@ import subprocess
 import logging
 from config_loader import read_config_byconfigparser
 
-backup_directory = eval(read_config_byconfigparser('PATH','backup_directory'))
-log_directory = eval(read_config_byconfigparser('PATH','log_directory'))
+backup_directory = read_config_byconfigparser('PATH','backup_directory')
+log_directory = read_config_byconfigparser('PATH','log_directory')
 if not os.path.exists(log_directory):
     os.makedirs(log_directory)
 

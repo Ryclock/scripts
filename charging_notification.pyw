@@ -7,13 +7,13 @@ import os
 from config_loader import read_config_byconfigparser
 
 filename = os.path.basename(__file__)
-sender_email = eval(read_config_byconfigparser('MAIL', 'sender_email'))
-sender_password = eval(read_config_byconfigparser(filename, 'sender_password'))
-receiver_email = eval(read_config_byconfigparser('MAIL', 'receiver_email'))
-subject = eval(read_config_byconfigparser(filename, 'subject'))
-smtp_server = eval(read_config_byconfigparser('MAIL', 'smtp_server'))
-smtp_port = eval(read_config_byconfigparser('MAIL', 'smtp_port'))
-duration = eval(read_config_byconfigparser(filename, 'duration_seconds'))
+sender_email = read_config_byconfigparser('MAIL', 'sender_email')
+sender_password = read_config_byconfigparser(filename, 'sender_password')
+receiver_email = read_config_byconfigparser('MAIL', 'receiver_email')
+subject = read_config_byconfigparser(filename, 'subject')
+smtp_server = read_config_byconfigparser('MAIL', 'smtp_server')
+smtp_port = read_config_byconfigparser('MAIL', 'smtp_port')
+duration = read_config_byconfigparser(filename, 'duration_seconds')
 
 try:
     import psutil

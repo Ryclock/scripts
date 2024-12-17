@@ -9,7 +9,7 @@ def read_config_byconfigparser(key_section: str, key_name: str) -> str:
 
     try:
         value = conf_inner.get(key_section, key_name)
-        return value
+        return eval(value)
     except (configparser.NoSectionError, configparser.NoOptionError):
         return None
 
@@ -17,4 +17,4 @@ if __name__ == '__main__':
     import os
     filename = os.path.basename(__file__)
     value = read_config_byconfigparser(filename, "test_key")
-    print(value)
+    print(type(value),len(value), value)
