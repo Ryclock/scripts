@@ -65,7 +65,7 @@ for repo in repos:
         os.chdir(backup_directory)
         continue
     logging.info(f"Cloning all branches of {repo['clone_url']}")
-    if os.system(f"git clone --mirror {repo['clone_url']} {clone_dir}") != 0:
+    if os.system(f"git clone {repo['clone_url']} {clone_dir}") != 0:
         logging.error(f"Failed to clone all branches of {repo['clone_url']}.")
 
 logging.info(f"Backup completed for user {GITHUB_USER} at {datetime.now()}")
