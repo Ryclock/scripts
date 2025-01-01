@@ -58,15 +58,14 @@ for repo in repos:
     if os.path.isdir(clone_dir):
         logging.info(f"Repository {repo_name} already exists, updating all branches.")
         os.chdir(clone_dir)
-        if os.system("git fetch --all >> " + log_file) != 0:
+        if os.system("git fetch --all") != 0:
             logging.error(f"Failed to fetch all branches for {repo_name}.")
-        if os.system("git pull --all >> " + log_file) != 0:
+        if os.system("git pull --all") != 0:
             logging.error(f"Failed to update all branches for {repo_name}.")
         os.chdir(backup_directory)
         continue
     logging.info(f"Cloning all branches of {repo['clone_url']}")
-    sub_log_file = os.path.join(log_directory, f"{sub_id}_{repo_name}.log")
-    if os.system(f"git clone --mirror {repo['clone_url']} {clone_dir} >> " + sub_log_file) != 0:
+    if os.system(f"git clone --mirror {repo['clone_url']} {clone_dir}") != 0:
         logging.error(f"Failed to clone all branches of {repo['clone_url']}.")
 
 logging.info(f"Backup completed for user {GITHUB_USER} at {datetime.now()}")
