@@ -1,13 +1,24 @@
 #!/bin/bash
 
-# 格式
-# 文件名: 作用，更新时间YYYY-MM-DD HH:MM:SS
+if [ "$#" -ne 1 ]; then
+    echo "Error: Please provide a directory path as an argument."
+    echo "Usage: $0 [directory_path]"
+    exit 1
+fi
 
-echo "scan lua files..."
+src_dir="$1"
 
-for file in *.lua; do
+if [ ! -d "$src_dir" ]; then
+    echo "Error: Directory does not exist or is not accessible: $src_dir"
+    exit 1
+fi
+
+echo "Scanning .lua files in $src_dir and their modification times..."
+
+for file in "$src_dir"/*.lua; do
     if [ -f "$file" ]; then
-        mtime=$(stat -c "%y" "$file" | cut -d. -f1)  # extract date and time, excluding milliseconds
-        echo "$file: 作用，更新时间$mtime"
+        filename=$(basename "$file")
+        mtime=$(stat -c "%y" "$file" | cut -d. -f1)  # extract date and time, remove milliseconds
+        echo "$filename: 作用，更新时间$mtime"
     fi
 done
