@@ -59,7 +59,7 @@ def send_email(message):
 
     filename = os.path.basename(__file__)
     sender_email = read_config_byconfigparser('MAIL', 'sender_email')
-    sender_password = read_config_byconfigparser(filename, 'sender_password')
+    sender_password = read_config_byconfigparser('MAIL', 'sender_password')
     receiver_email = read_config_byconfigparser('MAIL', 'receiver_email')
     subject = read_config_byconfigparser(filename, 'subject')
     smtp_server = read_config_byconfigparser('MAIL', 'smtp_server')

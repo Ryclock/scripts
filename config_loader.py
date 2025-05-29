@@ -4,7 +4,7 @@ def read_config_byconfigparser(key_section: str, key_name: str) -> str:
     import os
     conf_path = os.path.dirname(__file__) + "/config"
     conf_inner = configparser.ConfigParser()
-    if not conf_inner.read(conf_path):
+    if not conf_inner.read(conf_path, encoding='utf-8'):
         raise FileNotFoundError(conf_path)
 
     try:
