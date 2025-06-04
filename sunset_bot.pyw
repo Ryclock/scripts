@@ -54,13 +54,13 @@ def fetch_sun_data(events, city, base_url=base_url):
 
             results["judge"] = True
             results[event] = {
-                "date": data.get("tb_event_time", "").replace("<br>", " "),
-                "quality": data.get("tb_quality", "").replace("<br>", " "),
-                "aod": data.get("tb_aod", "").replace("<br>", " "),
+                "date": data.get("tb_event_time", "").replace("<br>", " ").strip(),
+                "quality": data.get("tb_quality", "").replace("<br>", " ").strip(),
+                "aod": data.get("tb_aod", "").replace("<br>", " ").strip(),
             }
         except Exception as e:
             logging.error(f"Error fetching data for {event}: {e}")
-            results[event] = {"error": str(e)}
+            results[event] = {"error": str(e).strip()}
         finally:
             sleep(10)
 
@@ -70,7 +70,7 @@ def generate_email_content(city, good_results):
     email_content = [
         f"预报城市: {city}",
         f"数据获取时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
-        "=" * 15
+        "=" * 15,
     ]
 
     for event, data in good_results.items():
@@ -78,18 +78,18 @@ def generate_email_content(city, good_results):
             email_content.extend([
                 f"\n[{event}] 无效",
                 f"{data['error']}",
-                "-" * 10
+                "-" * 10,
             ])
         else:
             email_content.extend([
-                f"\n{event}预报",
+                f"\n[{event}] 细节",
                 f"时间: {data['date']}",
                 f"质量: {data['quality']}",
                 f"AOD: {data['aod']}",
-                "-" * 10
+                "-" * 10,
             ])
 
-    return "".join(email_content)
+    return "\n".join(email_content)
 
 def send_email(message):
     import sys
@@ -125,9 +125,11 @@ def send_email(message):
         server.send_message(msg)
 
 res = fetch_sun_data(true_events, city)
+print(res)
 if not res['judge']:
     logging.warning(f"No valid data for {city} at {datetime.now()}")
     exit(0)
 del res['judge']
-send_email(generate_email_content(city, res))
+# send_email(generate_email_content(city, res))
+print(generate_email_content(city, res))
 logging.info(f"Email sent successfully for {city} at {datetime.now()}")
