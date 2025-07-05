@@ -6,30 +6,29 @@ import logging
 from datetime import datetime
 from config_loader import read_config_byconfigparser
 
-# backup_directory = read_config_byconfigparser('PATH','backup_directory')
-filename =  os.path.basename(__file__)
-sub_id = read_config_byconfigparser(filename,'sub_id')
-# backup_directory = os.path.join(backup_directory, sub_id)
-# if not os.path.exists(backup_directory):
-#     os.makedirs(backup_directory)
-#     logging.info(f"create directory '{backup_directory}' for backup")
+is_online = read_config_byconfigparser('COMMON','is_online')
+if not is_online:
+    # backup_directory = read_config_byconfigparser('PATH','backup_directory')
+    filename =  os.path.basename(__file__)
+    sub_id = read_config_byconfigparser(filename,'sub_id')
+    # backup_directory = os.path.join(backup_directory, sub_id)
+    # if not os.path.exists(backup_directory):
+    #     os.makedirs(backup_directory)
+    #     logging.info(f"create directory '{backup_directory}' for backup")
 
-log_directory = read_config_byconfigparser('PATH','log_directory')
-log_file = os.path.join(log_directory, sub_id)
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    filename=log_file
-)
+    log_directory = read_config_byconfigparser('PATH','log_directory')
+    log_file = os.path.join(log_directory, sub_id)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        filename=log_file
+    )
 
 if len(sys.argv) != 2 or sys.argv[1] not in ('afternoon', 'evening'):
     print("Usage: python3 sunset_bot.py [afternoon|evening]")
     sys.exit(1)
 
 mode = sys.argv[1]
-
-city = read_config_byconfigparser(filename,'city')
-logging.info(f"Starting {mode} task for city {city} at {datetime.now()}")
 
 base_url = read_config_byconfigparser(filename,'base_url')
 events = read_config_byconfigparser(filename, 'events')
@@ -59,8 +58,8 @@ def fetch_sun_data(events, city, base_url=base_url):
                 "aod": data.get("tb_aod", "").replace("<br>", " ").strip(),
             }
         except Exception as e:
-            logging.error(f"Error fetching data for {event}: {e}")
-            results[event] = {"error": str(e).strip()}
+            logging.warning(f"fetching bad data for {event}: {e}")
+            results[event] = {"bad": str(e).strip()}
         finally:
             sleep(10)
 
@@ -74,10 +73,10 @@ def generate_email_content(city, good_results):
     ]
 
     for event, data in good_results.items():
-        if "error" in data:
+        if "bad" in data:
             email_content.extend([
                 f"\n[{event}] 无效",
-                f"{data['error']}",
+                f"{data['bad']}",
                 "-" * 10,
             ])
         else:
@@ -124,12 +123,19 @@ def send_email(message):
         server.login(sender_email, sender_password)
         server.send_message(msg)
 
-res = fetch_sun_data(true_events, city)
-print(res)
-if not res['judge']:
-    logging.warning(f"No valid data for {city} at {datetime.now()}")
-    exit(0)
-del res['judge']
-# send_email(generate_email_content(city, res))
-print(generate_email_content(city, res))
-logging.info(f"Email sent successfully for {city} at {datetime.now()}")
+citys = read_config_byconfigparser(filename,'citys')
+for city in citys:
+    if not is_online:
+        logging.info(f"Starting {mode} task for city {city} at {datetime.now()}")
+
+    res = fetch_sun_data(true_events, city)
+    print(res)
+    if not res['judge']:
+        if not is_online:
+            logging.warning(f"No valid data for {city} at {datetime.now()}")
+        exit(0)
+    del res['judge']
+    # send_email(generate_email_content(city, res))
+    print(generate_email_content(city, res))
+    if not is_online:
+        logging.info(f"Email sent successfully for {city} at {datetime.now()}")

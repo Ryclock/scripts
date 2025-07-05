@@ -42,10 +42,10 @@ jobs:
         log_directory = ${{ secrets.LOG_DIRECTORY }}
 
         [sunset_bot.py]
-        sub_id = ${{ secrets.SUB_ID }}
-        city = ${{ secrets.CITY }}
-        base_url = ${{ secrets.BASE_URL }}
-        subject = ${{ secrets.EMAIL_SUBJECT }}
+        sub_id = ${{ secrets.SUNSET_SUB_ID }}
+        citys = ${{ secrets.SUNSET_CITYS }}
+        base_url = ${{ secrets.SUNSET_BASE_URL }}
+        subject = ${{ secrets.SUNSET_SUBJECT }}
 
         [MAIL]
         sender_email = ${{ secrets.SENDER_EMAIL }}
