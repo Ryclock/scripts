@@ -37,12 +37,11 @@ jobs:
 
     - name: Create config file from secrets
       run: |
-        cat <<EOT > config.ini
-        [PATH]
-        log_directory = ${{ secrets.LOG_DIRECTORY }}
+        cat <<EOT > config
+        [COMMON]
+        is_online = True
 
         [sunset_bot.py]
-        sub_id = ${{ secrets.SUNSET_SUB_ID }}
         citys = ${{ secrets.SUNSET_CITYS }}
         base_url = ${{ secrets.SUNSET_BASE_URL }}
         subject = ${{ secrets.SUNSET_SUBJECT }}
