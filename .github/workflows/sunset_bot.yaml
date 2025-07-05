@@ -1,0 +1,72 @@
+name: Sunset Bot
+
+on:
+  schedule:
+    # 北京时间15:10 (UTC时间7:10)
+    - cron: '10 7 * * *'
+    # 北京时间21:12 (UTC时间13:12)
+    - cron: '12 13 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '选择运行模式'
+        required: true
+        default: 'afternoon'
+        type: choice
+        options:
+          - afternoon
+          - evening
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 configparser psutil
+
+    - name: Create config file from secrets
+      run: |
+        cat <<EOT > config.ini
+        [PATH]
+        log_directory = ${{ secrets.LOG_DIRECTORY }}
+
+        [sunset_bot.py]
+        sub_id = ${{ secrets.SUB_ID }}
+        city = ${{ secrets.CITY }}
+        base_url = ${{ secrets.BASE_URL }}
+        subject = ${{ secrets.EMAIL_SUBJECT }}
+
+        [MAIL]
+        sender_email = ${{ secrets.SENDER_EMAIL }}
+        sender_password = ${{ secrets.SENDER_PASSWORD }}
+        receiver_email = ${{ secrets.RECEIVER_EMAIL }}
+        smtp_server = ${{ secrets.SMTP_SERVER }}
+        smtp_port = ${{ secrets.SMTP_PORT }}
+        EOT
+
+    - name: Determine mode
+      id: set-mode
+      run: |
+        if [ "${{ github.event.schedule }}" == "10 7 * * *" ]; then
+          echo "mode=afternoon" >> $GITHUB_OUTPUT
+        elif [ "${{ github.event.schedule }}" == "12 13 * * *" ]; then
+          echo "mode=evening" >> $GITHUB_OUTPUT
+        else
+          echo "mode=${{ github.event.inputs.mode || 'afternoon' }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Run task
+      run: python sunset_bot.py ${{ steps.set-mode.outputs.mode }}
+      env:
+        EVENTS_CONFIG: ${{ secrets.EVENTS_CONFIG }}

@@ -1,0 +1,41 @@
+name: Radiation Level Alert
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天UTC时间0点(北京时间8点)运行
+  workflow_dispatch:     # 允许手动触发
+
+jobs:
+  run-alert:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4 configparser
+
+    - name: Sync config
+      run: |
+        cat <<EOT > config
+        [MAIL]
+        sender_email = ${{ secrets.SENDER_EMAIL }}
+        sender_password = ${{ secrets.SENDER_PASSWORD }}
+        receiver_email = ${{ secrets.RECEIVER_EMAIL }}
+        smtp_server = ${{ secrets.SMTP_SERVER }}
+        smtp_port = ${{ secrets.SMTP_PORT }}
+
+        [alert_radiation_level.pyw]
+        subject = ${{ secrets.ALERT_SUBJECT }}
+        EOT
+
+    - name: Run script
+      run: python alert_radiation_level.pyw
