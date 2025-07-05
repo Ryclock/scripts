@@ -7,9 +7,9 @@ from datetime import datetime
 from config_loader import read_config_byconfigparser
 
 is_online = read_config_byconfigparser('COMMON','is_online')
+filename =  os.path.basename(__file__)
 if not is_online:
     # backup_directory = read_config_byconfigparser('PATH','backup_directory')
-    filename =  os.path.basename(__file__)
     sub_id = read_config_byconfigparser(filename,'sub_id')
     # backup_directory = os.path.join(backup_directory, sub_id)
     # if not os.path.exists(backup_directory):
