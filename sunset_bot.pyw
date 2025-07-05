@@ -118,10 +118,18 @@ def send_email(message):
     msg['From'] = sender_email
     msg['To'] = receiver_email
 
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.send_message(msg)
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port, timeout=30) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.send_message(msg)
+    except smtplib.SMTPResponseException as e:
+        if e.smtp_code == -1 and e.smtp_error == b'\x00\x00\x00':
+            print("Ignoring specific SMTP response exception")
+        else:
+            print(f"SMTP error: {e.smtp_code} - {e.smtp_error}")
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 citys = read_config_byconfigparser(filename,'citys')
 for city in citys:

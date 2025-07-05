@@ -67,6 +67,6 @@ jobs:
         fi
 
     - name: Run task
-      run: python sunset_bot.py ${{ steps.set-mode.outputs.mode }}
+      run: python sunset_bot.pyw ${{ steps.set-mode.outputs.mode }}
       env:
         EVENTS_CONFIG: ${{ secrets.EVENTS_CONFIG }}
