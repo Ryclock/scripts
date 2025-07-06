@@ -23,6 +23,11 @@ if not is_online:
         format='%(asctime)s - %(levelname)s - %(message)s',
         filename=log_file
     )
+else:
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+    )
 
 if len(sys.argv) != 2 or sys.argv[1] not in ('afternoon', 'evening'):
     print("Usage: python3 sunset_bot.py [afternoon|evening]")
@@ -44,11 +49,28 @@ def fetch_sun_data(events, city, base_url=base_url):
             "event": event
         }
         try:
-            response = requests.get(base_url, params=params, timeout=10)
+            headers = {
+                'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                'Accept-Encoding': "gzip, deflate, br",
+                'Accept-Language': "zh-CN,zh;q=0.9",
+                'Cache-Control': 'max-age=0',
+                'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'same-origin',
+                'Sec-Fetch-User': '?1',
+                'Upgrade-Insecure-Requests': '1',
+                'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                'X-Requested-With': "XMLHttpRequest",
+                'Sec-Ch-Ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
+                'Sec-Ch-Ua-Mobile': "?0",
+                'Sec-Ch-Ua-Platform': "Windows",
+            }
+            response = requests.get(base_url, params=params, headers=headers)
             response.raise_for_status()
             data = response.json()
             judge = data.get("tb_quality", None)
-            if not judge or float(judge.split("<br>")[0]) < 0.2:
+            if not judge or float(judge.split("（")[0]) < 0.2:
                 raise ValueError(f"Quality for {event} is too low: {judge}")
 
             results["judge"] = True
@@ -133,17 +155,14 @@ def send_email(message):
 
 citys = read_config_byconfigparser(filename,'citys')
 for city in citys:
-    if not is_online:
-        logging.info(f"Starting {mode} task for city {city} at {datetime.now()}")
+    logging.info(f"Starting {mode} task for city {city} at {datetime.now()}")
 
     res = fetch_sun_data(true_events, city)
     print(res)
     if not res['judge']:
-        if not is_online:
-            logging.warning(f"No valid data for {city} at {datetime.now()}")
-        exit(0)
+        logging.warning(f"No valid data for {city} at {datetime.now()}")
+        continue
     del res['judge']
     # send_email(generate_email_content(city, res))
     print(generate_email_content(city, res))
-    if not is_online:
-        logging.info(f"Email sent successfully for {city} at {datetime.now()}")
+    logging.info(f"Email sent successfully for {city} at {datetime.now()}")
