@@ -43,7 +43,6 @@ jobs:
 
         [sunset_bot.pyw]
         citys = ${{ secrets.SUNSET_CITYS }}
-        base_url = ${{ secrets.SUNSET_BASE_URL }}
         subject = ${{ secrets.SUNSET_SUBJECT }}
         events = ${{ secrets.SUNSET_EVENTS }}
 

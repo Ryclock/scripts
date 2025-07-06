@@ -35,7 +35,7 @@ if len(sys.argv) != 2 or sys.argv[1] not in ('afternoon', 'evening'):
 
 mode = sys.argv[1]
 
-base_url = read_config_byconfigparser(filename,'base_url')
+base_url = "https://sunsetbot.top/"
 events = read_config_byconfigparser(filename, 'events')
 true_events = events[mode] if events else []
 
@@ -50,21 +50,22 @@ def fetch_sun_data(events, city, base_url=base_url):
         }
         try:
             headers = {
-                'Accept': "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                'Accept-Encoding': "gzip, deflate, br",
-                'Accept-Language': "zh-CN,zh;q=0.9",
-                'Cache-Control': 'max-age=0',
-                'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8",
-                'Sec-Fetch-Dest': 'document',
-                'Sec-Fetch-Mode': 'navigate',
-                'Sec-Fetch-Site': 'same-origin',
-                'Sec-Fetch-User': '?1',
-                'Upgrade-Insecure-Requests': '1',
-                'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-                'X-Requested-With': "XMLHttpRequest",
-                'Sec-Ch-Ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Google Chrome";v="114"',
-                'Sec-Ch-Ua-Mobile': "?0",
-                'Sec-Ch-Ua-Platform': "Windows",
+                "Host": "sunsetbot.top",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
+                "Accept": "*/*",
+                "Accept-Language": "zh-CN,zh;q=0.8,zh-HK;q=0.6,en-US;q=0.4,en;q=0.2",
+                "Accept-Encoding": "gzip, deflate, br, zstd",
+                "X-Requested-With": "XMLHttpRequest",
+                "DNT": "1",
+                "Sec-GPC": "1",
+                "Connection": "keep-alive",
+                "Referer": "https://sunsetbot.top/",
+                "Cookie": "city_name=\344\270\212\346\265\267",
+                "Sec-Fetch-Dest": "empty",
+                "Sec-Fetch-Mode": "cors",
+                "Sec-Fetch-Site": "same-origin",
+                "Priority": "u=0",
+                "TE": "trailers",
             }
             response = requests.get(base_url, params=params, headers=headers)
             response.raise_for_status()
