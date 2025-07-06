@@ -135,6 +135,7 @@ def send_email(message):
             [sys.executable, "-m", "pip", "install", "psutil"])
         import psutil
 
+    print(message)
     msg = MIMEText(message)
     msg['Subject'] = subject
     msg['From'] = sender_email
@@ -163,6 +164,5 @@ for city in citys:
         logging.warning(f"No valid data for {city} at {datetime.now()}")
         continue
     del res['judge']
-    # send_email(generate_email_content(city, res))
-    print(generate_email_content(city, res))
+    send_email(generate_email_content(city, res))
     logging.info(f"Email sent successfully for {city} at {datetime.now()}")
