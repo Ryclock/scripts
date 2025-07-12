@@ -24,6 +24,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    
+    - name: Check ip
+      run: curl ifconfig.me
 
     - name: Set up Python
       uses: actions/setup-python@v4
